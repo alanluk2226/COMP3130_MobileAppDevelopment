@@ -1,35 +1,47 @@
 /**
  * View Component: SearchBar
- * Stateless component for search input
+ * Stateless component for search input with Google Material Design 3
  */
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 
 const SearchBar = ({ value, onChangeText }) => (
   <View style={styles.container}>
-    <TextInput
-      style={styles.input}
-      placeholder="Search by name or district..."
-      placeholderTextColor="#999"
-      value={value}
-      onChangeText={onChangeText}
-      clearButtonMode="while-editing"
-    />
+    <View style={styles.searchWrapper}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search schools by name or district..."
+        placeholderTextColor="#9CA3AF"
+        value={value}
+        onChangeText={onChangeText}
+        clearButtonMode="while-editing"
+      />
+    </View>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 16,
-    marginVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#FFFFFF',
+  },
+  searchWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F3F3',
+    borderRadius: 28,
+    paddingHorizontal: 16,
+    paddingVertical: 0,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
   },
   input: {
-    backgroundColor: '#f1f3f4',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: '#333',
+    flex: 1,
+    fontSize: 16,
+    color: '#202124',
+    paddingVertical: 12,
+    fontFamily: 'System',
   },
 });
 

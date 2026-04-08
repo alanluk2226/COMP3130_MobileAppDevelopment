@@ -1,6 +1,6 @@
 /**
  * View Screen: HomeScreen
- * Stateful/Class Component — demonstrates class component with state
+ * Stateful/Class Component — demonstrates class component with state and Google Material Design
  */
 import React, { Component } from 'react';
 import {
@@ -51,32 +51,41 @@ class HomeScreen extends Component {
 
     return (
       <SafeAreaView style={styles.safe}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>HK Schools</Text>
+          <Text style={styles.title}>Hong Kong Schools</Text>
           <Text style={styles.subtitle}>
-            {loading ? 'Loading...' : `${filtered.length} schools found`}
+            {loading ? 'Loading...' : `${filtered.length} result${filtered.length !== 1 ? 's' : ''}`}
           </Text>
           {fromCache && (
-            <Text style={styles.cacheNotice}>⚠️ Showing cached data (offline)</Text>
+            <View style={styles.cacheNoticeContainer}>
+              <Text style={styles.cacheNotice}>📡 Offline mode - showing cached data</Text>
+            </View>
           )}
         </View>
 
+        {/* Search Bar */}
         <SearchBar value={query} onChangeText={this.handleSearch} />
 
+        {/* Loading State */}
         {loading && (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#1967d2" />
-            <Text style={styles.loadingText}>Fetching school data...</Text>
+            <ActivityIndicator size="large" color="#1F2937" />
+            <Text style={styles.loadingText}>Finding schools...</Text>
           </View>
         )}
 
+        {/* Error State */}
         {error && (
           <View style={styles.center}>
-            <Text style={styles.errorText}>Error: {error}</Text>
+            <Text style={styles.errorIcon}>⚠️</Text>
+            <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
 
+        {/* List */}
         {!loading && !error && (
           <FlatList
             data={filtered}
@@ -86,6 +95,13 @@ class HomeScreen extends Component {
             )}
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={true}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyIcon}>🔍</Text>
+                <Text style={styles.emptyText}>No schools found</Text>
+              </View>
+            }
           />
         )}
       </SafeAreaView>
@@ -94,22 +110,80 @@ class HomeScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f8f9fa' },
+  safe: { flex: 1, backgroundColor: '#FFFFFF' },
   header: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 4,
-    backgroundColor: '#fff',
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#E8E8E8',
   },
-  title: { fontSize: 24, fontWeight: '700', color: '#1a1a2e' },
-  subtitle: { fontSize: 13, color: '#888', marginTop: 2, marginBottom: 8 },
-  cacheNotice: { fontSize: 11, color: '#e65100', marginBottom: 6 },
-  list: { paddingBottom: 20 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
-  loadingText: { marginTop: 12, color: '#666', fontSize: 14 },
-  errorText: { color: '#d32f2f', fontSize: 14, textAlign: 'center' },
+  title: { 
+    fontSize: 28, 
+    fontWeight: '500', 
+    color: '#202124',
+    letterSpacing: 0.25,
+  },
+  subtitle: { 
+    fontSize: 14, 
+    color: '#5F6368', 
+    marginTop: 4,
+    fontWeight: '400',
+  },
+  cacheNoticeContainer: {
+    marginTop: 8,
+    backgroundColor: '#FEF7E0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  cacheNotice: { 
+    fontSize: 12, 
+    color: '#9C6C00',
+    fontWeight: '500',
+  },
+  list: { 
+    paddingBottom: 20,
+    paddingTop: 4,
+  },
+  center: { 
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    paddingHorizontal: 20,
+  },
+  loadingText: { 
+    marginTop: 16, 
+    color: '#5F6368', 
+    fontSize: 16,
+    fontWeight: '400',
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  errorText: { 
+    color: '#D32F2F', 
+    fontSize: 16, 
+    textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 24,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#5F6368',
+    fontWeight: '500',
+  },
 });
 
 export default HomeScreen;
