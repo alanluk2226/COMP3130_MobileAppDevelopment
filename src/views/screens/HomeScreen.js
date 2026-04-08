@@ -6,14 +6,13 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  FlatList,
   ActivityIndicator,
   StyleSheet,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import SchoolCard from '../components/SchoolCard';
 import SearchBar from '../components/SearchBar';
+import CustomListView from '../components/CustomListView';
 import { fetchSchools, filterSchools } from '../../controllers/SchoolController';
 
 class HomeScreen extends Component {
@@ -87,21 +86,12 @@ class HomeScreen extends Component {
 
         {/* List */}
         {!loading && !error && (
-          <FlatList
+          <CustomListView
             data={filtered}
-            keyExtractor={(item, index) => item.id || String(index)}
-            renderItem={({ item }) => (
-              <SchoolCard school={item} onPress={this.handleSelectSchool} />
-            )}
-            contentContainerStyle={styles.list}
-            showsVerticalScrollIndicator={false}
-            scrollEnabled={true}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyIcon}>🔍</Text>
-                <Text style={styles.emptyText}>No schools found</Text>
-              </View>
-            }
+            onSelectItem={this.handleSelectSchool}
+            isLoading={loading}
+            showRecordCount={true}
+            emptyMessage="No schools found"
           />
         )}
       </SafeAreaView>
@@ -143,10 +133,6 @@ const styles = StyleSheet.create({
     color: '#9C6C00',
     fontWeight: '500',
   },
-  list: { 
-    paddingBottom: 20,
-    paddingTop: 4,
-  },
   center: { 
     flex: 1, 
     alignItems: 'center', 
@@ -169,20 +155,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     lineHeight: 24,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#5F6368',
-    fontWeight: '500',
   },
 });
 
