@@ -14,11 +14,14 @@ import {
   Linking,
   Platform,
 } from 'react-native';
+import {useTheme} from '../../context/Theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../i18n/translations';
 
 const InfoDialog = ({ visible, school, onClose }) => {
   const { lang } = useLanguage();
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
   if (!school) return null;
 
   const name = lang === 'zh' ? school.nameCh : school.nameEn;
@@ -144,173 +147,124 @@ const InfoItem = ({ icon, label, value }) => (
   </View>
 );
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  dialogContainer: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-    paddingHorizontal: 0,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: -4 },
-    elevation: 12,
-  },
-  scrollView: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  headerIcon: {
-    fontSize: 32,
-  },
-  closeBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F3F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeIcon: {
-    fontSize: 20,
-    color: '#202124',
-    fontWeight: '600',
-  },
-  titleSection: {
-    marginBottom: 16,
-  },
-  schoolName: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#202124',
-    lineHeight: 32,
-  },
-  schoolNameCh: {
-    fontSize: 16,
-    color: '#5F6368',
-    marginTop: 4,
-    fontWeight: '400',
-  },
-  badgeSection: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-    flexWrap: 'wrap',
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E8F0FE',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    gap: 6,
-  },
-  badgeAlt: {
-    backgroundColor: '#F0F0F0',
-  },
-  badgeAlt2: {
-    backgroundColor: '#FEF7E0',
-  },
-  badgeIcon: {
-    fontSize: 16,
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#1F2937',
-  },
-  badgeTextAlt: {
-    color: '#5F6368',
-  },
-  infoSection: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
-  },
-  infoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingVertical: 8,
-  },
-  infoLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flex: 1,
-  },
-  infoIcon: {
-    fontSize: 18,
-    width: 24,
-    textAlign: 'center',
-  },
-  infoLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#5F6368',
-  },
-  infoValue: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: '#202124',
-    flex: 1,
-    textAlign: 'right',
-    paddingLeft: 12,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8E8E8',
-    marginVertical: 8,
-  },
-  actionSection: {
-    marginBottom: 16,
-    gap: 10,
-  },
-  actionBtn: {
-    backgroundColor: '#1F2937',
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  mapBtn: {
-    backgroundColor: '#4285F4',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  mapIcon: {
-    fontSize: 18,
-  },
-  actionBtnText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  spacer: {
-    height: 20,
-  },
-});
+const getStyles = theme =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: theme.modalOverlay,
+      justifyContent: 'flex-end',
+    },
+    dialogContainer: {
+      backgroundColor: theme.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      maxHeight: '90%',
+      paddingHorizontal: 0,
+      shadowColor: '#000',
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+      shadowOffset: {width: 0, height: -4},
+      elevation: 12,
+    },
+    scrollView: {paddingHorizontal: 20, paddingTop: 16},
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    headerIcon: {fontSize: 32},
+    closeBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.settingsBtn,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeIcon: {fontSize: 20, color: theme.textPrimary, fontWeight: '600'},
+    titleSection: {marginBottom: 16},
+    schoolName: {
+      fontSize: 24,
+      fontWeight: '600',
+      color: theme.textPrimary,
+      lineHeight: 32,
+    },
+    schoolNameCh: {fontSize: 16, color: theme.textSecondary, marginTop: 4},
+    badgeSection: {
+      flexDirection: 'row',
+      gap: 8,
+      marginBottom: 20,
+      flexWrap: 'wrap',
+    },
+    badge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.surface,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 12,
+      gap: 6,
+    },
+    badgeAlt: {backgroundColor: theme.surface},
+    badgeAlt2: {backgroundColor: theme.warningBg},
+    badgeIcon: {fontSize: 16},
+    badgeText: {fontSize: 13, fontWeight: '500', color: theme.textPrimary},
+    badgeTextAlt: {color: theme.textSecondary},
+    infoSection: {
+      backgroundColor: theme.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 20,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
+    infoItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      paddingVertical: 8,
+    },
+    infoLabelContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      flex: 1,
+    },
+    infoIcon: {fontSize: 18, width: 24, textAlign: 'center'},
+    infoLabel: {fontSize: 13, fontWeight: '500', color: theme.textSecondary},
+    infoValue: {
+      fontSize: 13,
+      fontWeight: '400',
+      color: theme.textPrimary,
+      flex: 1,
+      textAlign: 'right',
+      paddingLeft: 12,
+    },
+    divider: {height: 1, backgroundColor: theme.border, marginVertical: 8},
+    actionSection: {marginBottom: 16, gap: 10},
+    actionBtn: {
+      backgroundColor: theme.accent,
+      borderRadius: 8,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      shadowOffset: {width: 0, height: 2},
+    },
+    mapBtn: {
+      backgroundColor: '#4285F4',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    mapIcon: {fontSize: 18},
+    actionBtnText: {color: '#FFFFFF', fontSize: 16, fontWeight: '600'},
+    spacer: {height: 20},
+  });
+
 
 export default InfoDialog;
