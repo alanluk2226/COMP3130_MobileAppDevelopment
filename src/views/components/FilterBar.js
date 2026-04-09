@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   Modal,
   StyleSheet,
   ScrollView,
+  Animated,
+  Easing,
 } from 'react-native';
 import {useTheme} from '../../context/Theme';
 import {t} from '../../i18n/translations';
@@ -54,8 +56,36 @@ const FilterBar = ({
 }) => {
   const {theme} = useTheme();
   const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
   const styles = getStyles(theme);
   const options = ALL_OPTIONS(lang);
+
+  useEffect(() => {
+    if (open) {
+      setVisible(true);
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setVisible(false);
+      });
+    }
+  }, [open, slideAnim]);
+
+  const translateY = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [600, 0],
+  });
 
   const getSelected = o => {
     if (o.type === 'all')
@@ -87,6 +117,10 @@ const FilterBar = ({
     } else if (o.type === 'region') {
       onRegionChange(o.value === activeRegion ? 'All' : o.value);
     }
+  };
+
+  const closeModal = () => {
+    setOpen(false);
   };
 
   const activeCount = [
@@ -139,14 +173,14 @@ const FilterBar = ({
 
       <Modal
         transparent
-        visible={open}
-        animationType="slide"
-        onRequestClose={() => setOpen(false)}>
+        visible={visible}
+        animationType="fade"
+        onRequestClose={closeModal}>
         <TouchableOpacity
           style={styles.overlay}
           activeOpacity={1}
-          onPress={() => setOpen(false)}>
-          <TouchableOpacity activeOpacity={1} style={styles.sheet}>
+          onPress={closeModal}>
+          <Animated.View style={[styles.sheet, {transform: [{translateY}]}]}>
             <View style={styles.handle} />
             <Text style={styles.sheetTitle}>Filter</Text>
             <ScrollView
@@ -197,12 +231,10 @@ const FilterBar = ({
                 {sortAZ && <Text style={styles.check}>✓</Text>}
               </TouchableOpacity>
             </ScrollView>
-            <TouchableOpacity
-              style={styles.doneBtn}
-              onPress={() => setOpen(false)}>
+            <TouchableOpacity style={styles.doneBtn} onPress={closeModal}>
               <Text style={styles.doneBtnText}>{t(lang, 'done')}</Text>
             </TouchableOpacity>
-          </TouchableOpacity>
+          </Animated.View>
         </TouchableOpacity>
       </Modal>
     </View>

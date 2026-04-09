@@ -1,7 +1,3 @@
-/**
- * View Component: InfoDialog
- * Modal dialog for displaying detailed school information
- */
 import React from 'react';
 import {
   Modal,
@@ -15,11 +11,11 @@ import {
   Platform,
 } from 'react-native';
 import {useTheme} from '../../context/Theme';
-import { useLanguage } from '../../context/LanguageContext';
-import { t } from '../../i18n/translations';
+import {useLanguage} from '../../context/LanguageContext';
+import {t} from '../../i18n/translations';
 
-const InfoDialog = ({ visible, school, onClose }) => {
-  const { lang } = useLanguage();
+const InfoDialog = ({visible, school, onClose}) => {
+  const {lang} = useLanguage();
   const {theme} = useTheme();
   const styles = getStyles(theme);
   if (!school) return null;
@@ -34,20 +30,32 @@ const InfoDialog = ({ visible, school, onClose }) => {
 
   const openMap = () => {
     const query = encodeURIComponent(school.nameEn + ' Hong Kong');
-
     const url = Platform.select({
       ios: `maps:0,0?q=${query}`,
       android: `geo:0,0?q=${query}`,
     });
-
-    Linking.canOpenURL(url).then((supported) => {
+    Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Linking.openURL(url);
       } else {
-        Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
+        Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${query}`,
+        );
       }
     });
   };
+
+  const Divider = () => <View style={styles.divider} />;
+
+  const InfoItem = ({icon, label, value}) => (
+    <View style={styles.infoItem}>
+      <View style={styles.infoLabelContainer}>
+        <Text style={styles.infoIcon}>{icon}</Text>
+        <Text style={styles.infoLabel}>{label}</Text>
+      </View>
+      <Text style={styles.infoValue}>{value || 'N/A'}</Text>
+    </View>
+  );
 
   return (
     <Modal
@@ -60,7 +68,6 @@ const InfoDialog = ({ visible, school, onClose }) => {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={styles.scrollView}>
-            {/* Header */}
             <View style={styles.header}>
               <Text style={styles.headerIcon}>🏫</Text>
               <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
@@ -68,32 +75,42 @@ const InfoDialog = ({ visible, school, onClose }) => {
               </TouchableOpacity>
             </View>
 
-            {/* School Name */}
             <View style={styles.titleSection}>
               <Text style={styles.schoolName}>{name}</Text>
               <Text style={styles.schoolNameCh}>{subName}</Text>
             </View>
 
-              <View style={styles.badgeSection}>
+            <View style={styles.badgeSection}>
               <View style={styles.badge}>
                 <Text style={styles.badgeIcon}>📚</Text>
                 <Text style={styles.badgeText}>{level}</Text>
               </View>
               <View style={[styles.badge, styles.badgeAlt]}>
                 <Text style={styles.badgeIcon}>👥</Text>
-                <Text style={[styles.badgeText, styles.badgeTextAlt]}>{gender}</Text>
+                <Text style={[styles.badgeText, styles.badgeTextAlt]}>
+                  {gender}
+                </Text>
               </View>
               <View style={[styles.badge, styles.badgeAlt2]}>
                 <Text style={styles.badgeIcon}>💼</Text>
-                <Text style={[styles.badgeText, styles.badgeTextAlt]}>{financeType}</Text>
+                <Text style={[styles.badgeText, styles.badgeTextAlt]}>
+                  {financeType}
+                </Text>
               </View>
             </View>
 
-            {/* Info Rows */}
             <View style={styles.infoSection}>
-              <InfoItem icon="📍" label={t(lang, 'district')} value={district} />
+              <InfoItem
+                icon="📍"
+                label={t(lang, 'district')}
+                value={district}
+              />
               <Divider />
-              <InfoItem icon="☎️" label={t(lang, 'phone')} value={school.phone} />
+              <InfoItem
+                icon="☎️"
+                label={t(lang, 'phone')}
+                value={school.phone}
+              />
               <Divider />
               <InfoItem icon="📬" label={t(lang, 'address')} value={address} />
               {school.latitude && school.longitude && (
@@ -102,27 +119,26 @@ const InfoDialog = ({ visible, school, onClose }) => {
                   <InfoItem
                     icon="🗺️"
                     label={t(lang, 'coordinates')}
-                    value={`${school.latitude.toFixed(5)}, ${school.longitude.toFixed(5)}`}
+                    value={`${school.latitude.toFixed(
+                      5,
+                    )}, ${school.longitude.toFixed(5)}`}
                   />
                 </>
               )}
             </View>
 
-            {/* Action Buttons */}
             <View style={styles.actionSection}>
               {school.address && school.address !== 'N/A' && (
                 <TouchableOpacity
                   style={[styles.actionBtn, styles.mapBtn]}
-                  onPress={openMap}
-                  activeOpacity={0.7}>
+                  onPress={openMap}>
                   <Text style={styles.mapIcon}>📍</Text>
-                  <Text style={styles.actionBtnText}>{t(lang, 'viewOnMap')}</Text>
+                  <Text style={styles.actionBtnText}>
+                    {t(lang, 'viewOnMap')}
+                  </Text>
                 </TouchableOpacity>
               )}
-              <TouchableOpacity
-                style={styles.actionBtn}
-                onPress={onClose}
-                activeOpacity={0.7}>
+              <TouchableOpacity style={styles.actionBtn} onPress={onClose}>
                 <Text style={styles.actionBtnText}>{t(lang, 'close')}</Text>
               </TouchableOpacity>
             </View>
@@ -134,18 +150,6 @@ const InfoDialog = ({ visible, school, onClose }) => {
     </Modal>
   );
 };
-
-const Divider = () => <View style={styles.divider} />;
-
-const InfoItem = ({ icon, label, value }) => (
-  <View style={styles.infoItem}>
-    <View style={styles.infoLabelContainer}>
-      <Text style={styles.infoIcon}>{icon}</Text>
-      <Text style={styles.infoLabel}>{label}</Text>
-    </View>
-    <Text style={styles.infoValue}>{value || 'N/A'}</Text>
-  </View>
-);
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -265,6 +269,5 @@ const getStyles = theme =>
     actionBtnText: {color: '#FFFFFF', fontSize: 16, fontWeight: '600'},
     spacer: {height: 20},
   });
-
 
 export default InfoDialog;

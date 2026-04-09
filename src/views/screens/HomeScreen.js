@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   StatusBar,
   TouchableOpacity,
   Modal,
+  Animated,
+  Easing,
 } from 'react-native';
 import SearchBar from '../components/SearchBar';
 import FilterBar from '../components/FilterBar';
@@ -32,6 +34,8 @@ const HomeScreen = ({navigation}) => {
   const [activeFinance, setActiveFinance] = useState('All');
   const [activeRegion, setActiveRegion] = useState('All');
   const [showLangModal, setShowLangModal] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     async function load() {
@@ -47,6 +51,36 @@ const HomeScreen = ({navigation}) => {
     }
     load();
   }, []);
+
+  useEffect(() => {
+    if (showLangModal) {
+      setModalVisible(true);
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setModalVisible(false);
+      });
+    }
+  }, [showLangModal, slideAnim]);
+
+  const translateY = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [600, 0],
+  });
+
+  const closeModal = () => {
+    setShowLangModal(false);
+  };
 
   const filtered = filterSchools(
     schools,
@@ -92,14 +126,15 @@ const HomeScreen = ({navigation}) => {
 
       <Modal
         transparent
-        visible={showLangModal}
+        visible={modalVisible}
         animationType="fade"
-        onRequestClose={() => setShowLangModal(false)}>
+        onRequestClose={closeModal}>
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
-          onPress={() => setShowLangModal(false)}>
-          <View style={styles.modalCard}>
+          onPress={closeModal}>
+          <Animated.View
+            style={[styles.modalCard, {transform: [{translateY}]}]}>
             <Text style={styles.modalTitle}>{t(lang, 'settingsTitle')}</Text>
 
             <TouchableOpacity
@@ -109,7 +144,7 @@ const HomeScreen = ({navigation}) => {
               ]}
               onPress={() => {
                 toggleLang();
-                setShowLangModal(false);
+                closeModal();
               }}>
               <Text
                 style={[
@@ -127,7 +162,7 @@ const HomeScreen = ({navigation}) => {
               ]}
               onPress={() => {
                 toggleLang();
-                setShowLangModal(false);
+                closeModal();
               }}>
               <Text
                 style={[
@@ -147,7 +182,10 @@ const HomeScreen = ({navigation}) => {
                 styles.langOption,
                 themeMode === 'light' && styles.langOptionActive,
               ]}
-              onPress={() => toggleTheme('light')}>
+              onPress={() => {
+                toggleTheme('light');
+                closeModal();
+              }}>
               <Text
                 style={[
                   styles.langOptionText,
@@ -161,7 +199,10 @@ const HomeScreen = ({navigation}) => {
                 styles.langOption,
                 themeMode === 'dark' && styles.langOptionActive,
               ]}
-              onPress={() => toggleTheme('dark')}>
+              onPress={() => {
+                toggleTheme('dark');
+                closeModal();
+              }}>
               <Text
                 style={[
                   styles.langOptionText,
@@ -175,7 +216,10 @@ const HomeScreen = ({navigation}) => {
                 styles.langOption,
                 themeMode === 'system' && styles.langOptionActive,
               ]}
-              onPress={() => toggleTheme('system')}>
+              onPress={() => {
+                toggleTheme('system');
+                closeModal();
+              }}>
               <Text
                 style={[
                   styles.langOptionText,
@@ -184,7 +228,7 @@ const HomeScreen = ({navigation}) => {
                 System
               </Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </TouchableOpacity>
       </Modal>
 
