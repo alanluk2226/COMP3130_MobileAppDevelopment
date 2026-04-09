@@ -90,7 +90,6 @@ const InfoDialog = ({visible, school, onClose}) => {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={styles.scrollView}>
-            {/* Header with only close button */}
             <View style={styles.header}>
               <Text style={styles.headerIcon}>🏫</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
@@ -98,7 +97,6 @@ const InfoDialog = ({visible, school, onClose}) => {
               </TouchableOpacity>
             </View>
 
-            {/* School name with star beside it */}
             <View style={styles.titleSection}>
               <View style={styles.nameRow}>
                 <Text style={styles.schoolName}>{name}</Text>
@@ -115,8 +113,6 @@ const InfoDialog = ({visible, school, onClose}) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.schoolNameCh}>{subName}</Text>
-
-              {/* Info text about bookmark */}
               <Text style={styles.bookmarkInfo}>
                 {isBookmarked
                   ? t(lang, 'bookmarkedHint')
