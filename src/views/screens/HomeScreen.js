@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import SearchBar from '../components/SearchBar';
 import FilterBar from '../components/FilterBar';
 import CustomListView from '../components/CustomListView';
@@ -18,6 +19,7 @@ import {fetchSchools, filterSchools} from '../../controllers/SchoolController';
 import {useLanguage} from '../../context/LanguageContext';
 import {useTheme} from '../../context/Theme';
 import {t} from '../../i18n/translations';
+import {getBookmarks} from '../../controllers/BookmarkController';
 
 const HomeScreen = ({navigation}) => {
   const {lang, toggleLang} = useLanguage();
@@ -35,6 +37,8 @@ const HomeScreen = ({navigation}) => {
   const [activeRegion, setActiveRegion] = useState('All');
   const [showLangModal, setShowLangModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
+  const [bookmarkedIds, setBookmarkedIds] = useState([]);
   const slideAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -51,6 +55,16 @@ const HomeScreen = ({navigation}) => {
     }
     load();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadBookmarks = async () => {
+        const ids = await getBookmarks();
+        setBookmarkedIds(ids);
+      };
+      loadBookmarks();
+    }, []),
+  );
 
   useEffect(() => {
     if (showLangModal) {
@@ -82,7 +96,7 @@ const HomeScreen = ({navigation}) => {
     setShowLangModal(false);
   };
 
-  const filtered = filterSchools(
+  let filtered = filterSchools(
     schools,
     query,
     activeLevel,
@@ -91,6 +105,10 @@ const HomeScreen = ({navigation}) => {
     activeRegion,
     sortAZ,
   );
+
+  if (showBookmarkedOnly) {
+    filtered = filtered.filter(school => bookmarkedIds.includes(school.id));
+  }
 
   const styles = getStyles(theme);
 
@@ -111,11 +129,27 @@ const HomeScreen = ({navigation}) => {
                 : t(lang, 'results')(filtered.length)}
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.settingsBtn}
-            onPress={() => setShowLangModal(true)}>
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={[
+                styles.bookmarkFilterBtn,
+                showBookmarkedOnly && styles.bookmarkFilterActive,
+              ]}
+              onPress={() => setShowBookmarkedOnly(!showBookmarkedOnly)}>
+              <Text
+                style={[
+                  styles.bookmarkFilterIcon,
+                  showBookmarkedOnly && {color: '#FFF'},
+                ]}>
+                {showBookmarkedOnly ? '★' : '☆'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingsBtn}
+              onPress={() => setShowLangModal(true)}>
+              <Text style={styles.settingsIcon}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {fromCache && (
           <View style={styles.cacheNoticeContainer}>
@@ -268,7 +302,9 @@ const HomeScreen = ({navigation}) => {
           onSelectItem={school => navigation.navigate('Detail', {school})}
           isLoading={loading}
           showRecordCount
-          emptyMessage={t(lang, 'noSchools')}
+          emptyMessage={
+            showBookmarkedOnly ? t(lang, 'noBookmarks') : t(lang, 'noSchools')
+          }
           lang={lang}
         />
       )}
@@ -294,6 +330,17 @@ const getStyles = theme =>
     },
     title: {fontSize: 28, fontWeight: '500', color: theme.textPrimary},
     subtitle: {fontSize: 14, color: theme.textSecondary, marginTop: 4},
+    bookmarkFilterBtn: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: theme.settingsBtn,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 8,
+    },
+    bookmarkFilterActive: {backgroundColor: theme.accent},
+    bookmarkFilterIcon: {fontSize: 22, color: theme.textPrimary},
     settingsBtn: {
       width: 44,
       height: 44,

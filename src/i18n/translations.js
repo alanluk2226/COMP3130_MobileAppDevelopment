@@ -1,19 +1,19 @@
-export const t = (lang, key) => translations[lang]?.[key] ?? translations.en[key] ?? key;
+export const t = (lang, key) =>
+  translations[lang]?.[key] ?? translations.en[key] ?? key;
 
-// Maps each district to its region
 export const DISTRICT_REGION = {
   'CENTRAL & WESTERN': 'HK_ISLAND',
-  'EASTERN': 'HK_ISLAND',
-  'SOUTHERN': 'HK_ISLAND',
+  EASTERN: 'HK_ISLAND',
+  SOUTHERN: 'HK_ISLAND',
   'WAN CHAI': 'HK_ISLAND',
   'KOWLOON CITY': 'KOWLOON',
   'KWUN TONG': 'KOWLOON',
   'SHAM SHUI PO': 'KOWLOON',
   'WONG TAI SIN': 'KOWLOON',
   'YAU TSIM MONG': 'KOWLOON',
-  'ISLANDS': 'NEW_TERRITORIES',
+  ISLANDS: 'NEW_TERRITORIES',
   'KWAI TSING': 'NEW_TERRITORIES',
-  'NORTH': 'NEW_TERRITORIES',
+  NORTH: 'NEW_TERRITORIES',
   'SAI KUNG': 'NEW_TERRITORIES',
   'SHA TIN': 'NEW_TERRITORIES',
   'TAI PO': 'NEW_TERRITORIES',
@@ -22,20 +22,19 @@ export const DISTRICT_REGION = {
   'YUEN LONG': 'NEW_TERRITORIES',
 };
 
-// Translate API English values (district, level, gender, financeType) to Chinese
 const districtMap = {
   'Central & Western': '中西區',
-  'Eastern': '東區',
-  'Southern': '南區',
+  Eastern: '東區',
+  Southern: '南區',
   'Wan Chai': '灣仔區',
   'Kowloon City': '九龍城區',
   'Kwun Tong': '觀塘區',
   'Sham Shui Po': '深水埗區',
   'Wong Tai Sin': '黃大仙區',
   'Yau Tsim Mong': '油尖旺區',
-  'Islands': '離島區',
+  Islands: '離島區',
   'Kwai Tsing': '葵青區',
-  'North': '北區',
+  North: '北區',
   'Sai Kung': '西貢區',
   'Sha Tin': '沙田區',
   'Tai Po': '大埔區',
@@ -45,32 +44,37 @@ const districtMap = {
 };
 
 const levelMap = {
-  'Primary': '小學',
-  'Secondary': '中學',
-  'Kindergarten': '幼稚園',
+  Primary: '小學',
+  Secondary: '中學',
+  Kindergarten: '幼稚園',
   'Kindergarten-cum-Child Care Centre': '幼稚園暨幼兒中心',
-  'Special': '特殊學校',
+  Special: '特殊學校',
   'Post Secondary': '專上學院',
 };
 
 const genderMap = {
   'Co-ed': '男女校',
-  'Boys': '男校',
-  'Girls': '女校',
+  Boys: '男校',
+  Girls: '女校',
 };
 
 const financeMap = {
-  'Government': '官立',
-  'Aided': '資助',
-  'Private': '私立',
+  Government: '官立',
+  Aided: '資助',
+  Private: '私立',
   'Direct Subsidy Scheme': '直資',
-  'Caput': '按位津貼',
-  'International': '國際學校',
+  Caput: '按位津貼',
+  International: '國際學校',
 };
 
 export const translateField = (lang, type, value) => {
   if (lang !== 'zh' || !value) return value;
-  const maps = { district: districtMap, level: levelMap, gender: genderMap, financeType: financeMap };
+  const maps = {
+    district: districtMap,
+    level: levelMap,
+    gender: genderMap,
+    financeType: financeMap,
+  };
   return maps[type]?.[value] ?? value;
 };
 
@@ -79,7 +83,7 @@ const translations = {
     appTitle: 'Hong Kong Schools',
     search: 'Search schools by name or district...',
     searchHelper: 'Enter school name or district to search',
-    results: (n) => `${n} result${n !== 1 ? 's' : ''}`,
+    results: n => `${n} result${n !== 1 ? 's' : ''}`,
     loading: 'Loading...',
     findingSchools: 'Finding schools...',
     offlineMode: '📡 Offline mode - showing cached data',
@@ -115,12 +119,18 @@ const translations = {
     settingsTitle: 'Language',
     switchToZh: '切換至中文',
     switchToEn: 'Switch to English',
+    bookmark: 'Bookmark',
+    bookmarked: 'Bookmarked',
+    showBookmarkedOnly: 'Bookmarked only',
+    noBookmarks: 'No bookmarked schools',
+    bookmarkHint: '☆ Tap to bookmark this school',
+    bookmarkedHint: '★ Bookmarked – tap again to remove',
   },
   zh: {
     appTitle: '香港學校',
     search: '按名稱或地區搜尋學校...',
     searchHelper: '輸入學校名稱或地區以搜尋',
-    results: (n) => `${n} 個結果`,
+    results: n => `${n} 個結果`,
     loading: '載入中...',
     findingSchools: '正在搜尋學校...',
     offlineMode: '📡 離線模式 - 顯示緩存資料',
@@ -156,5 +166,11 @@ const translations = {
     settingsTitle: '語言',
     switchToZh: '切換至中文',
     switchToEn: 'Switch to English',
+    bookmark: '書籤',
+    bookmarked: '已收藏',
+    showBookmarkedOnly: '只顯示書籤',
+    noBookmarks: '沒有收藏的學校',
+    bookmarkHint: '☆ 點擊收藏此學校',
+    bookmarkedHint: '★ 已收藏 – 點擊取消',
   },
 };

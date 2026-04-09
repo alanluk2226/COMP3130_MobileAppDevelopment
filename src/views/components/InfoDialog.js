@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Modal,
   View,
@@ -13,12 +13,34 @@ import {
 import {useTheme} from '../../context/Theme';
 import {useLanguage} from '../../context/LanguageContext';
 import {t} from '../../i18n/translations';
+import {
+  getBookmarks,
+  toggleBookmark,
+} from '../../controllers/BookmarkController';
 
 const InfoDialog = ({visible, school, onClose}) => {
   const {lang} = useLanguage();
   const {theme} = useTheme();
   const styles = getStyles(theme);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarks, setBookmarks] = useState([]);
+
   if (!school) return null;
+
+  useEffect(() => {
+    const load = async () => {
+      const bm = await getBookmarks();
+      setBookmarks(bm);
+      setIsBookmarked(bm.includes(school.id));
+    };
+    if (visible) load();
+  }, [visible, school.id]);
+
+  const handleToggleBookmark = async () => {
+    const newBookmarks = await toggleBookmark(school.id, bookmarks);
+    setBookmarks(newBookmarks);
+    setIsBookmarked(newBookmarks.includes(school.id));
+  };
 
   const name = lang === 'zh' ? school.nameCh : school.nameEn;
   const subName = lang === 'zh' ? school.nameEn : school.nameCh;
@@ -68,16 +90,38 @@ const InfoDialog = ({visible, school, onClose}) => {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={styles.scrollView}>
+            {/* Header with only close button */}
             <View style={styles.header}>
               <Text style={styles.headerIcon}>🏫</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                 <Text style={styles.closeIcon}>✕</Text>
               </TouchableOpacity>
             </View>
 
+            {/* School name with star beside it */}
             <View style={styles.titleSection}>
-              <Text style={styles.schoolName}>{name}</Text>
+              <View style={styles.nameRow}>
+                <Text style={styles.schoolName}>{name}</Text>
+                <TouchableOpacity
+                  onPress={handleToggleBookmark}
+                  style={styles.starButton}>
+                  <Text
+                    style={[
+                      styles.starIcon,
+                      {color: isBookmarked ? '#F4B400' : theme.textSecondary},
+                    ]}>
+                    {isBookmarked ? '★' : '☆'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <Text style={styles.schoolNameCh}>{subName}</Text>
+
+              {/* Info text about bookmark */}
+              <Text style={styles.bookmarkInfo}>
+                {isBookmarked
+                  ? t(lang, 'bookmarkedHint')
+                  : t(lang, 'bookmarkHint')}
+              </Text>
             </View>
 
             <View style={styles.badgeSection}>
@@ -188,13 +232,31 @@ const getStyles = theme =>
     },
     closeIcon: {fontSize: 20, color: theme.textPrimary, fontWeight: '600'},
     titleSection: {marginBottom: 16},
+    nameRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
     schoolName: {
       fontSize: 24,
       fontWeight: '600',
       color: theme.textPrimary,
       lineHeight: 32,
+      flex: 1,
+      flexWrap: 'wrap',
     },
+    starButton: {
+      padding: 8,
+      marginLeft: 8,
+    },
+    starIcon: {fontSize: 28},
     schoolNameCh: {fontSize: 16, color: theme.textSecondary, marginTop: 4},
+    bookmarkInfo: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginTop: 8,
+      fontStyle: 'italic',
+    },
     badgeSection: {
       flexDirection: 'row',
       gap: 8,
