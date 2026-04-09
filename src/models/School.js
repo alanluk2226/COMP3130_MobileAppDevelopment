@@ -1,0 +1,22 @@
+/**
+ * Model: School
+ * Represents a single school record from the EDB API
+ */
+export const createSchool = (raw) => ({
+  id: raw['SCHOOL NO.'] || raw.SCHOOL_NO || raw.SchoolNo || '',
+  nameEn: raw['ENGLISH NAME'] || raw.ENGLISH_NAME || raw.EngName || 'N/A',
+  nameCh: raw['中文名稱'] || raw.CHINESE_NAME || raw.ChiName || 'N/A',
+  district: raw['DISTRICT'] || raw.DISTRICT_EN || raw.DistrictEn || 'N/A',
+  districtCh: raw['分區'] || 'N/A',
+  address: raw['ENGLISH ADDRESS'] || raw.ADDRESS_EN || raw.EngAddress || 'N/A',
+  addressCh: raw['中文地址'] || 'N/A',
+  phone: raw['TELEPHONE'] || raw.TelNo || 'N/A',
+  level: raw['SCHOOL LEVEL'] || raw.SCHOOL_LEVEL_EN || raw.LevelOfEdu || 'N/A',
+  levelCh: raw['學校類型'] || 'N/A',
+  gender: raw['STUDENTS GENDER'] || raw.STUDENT_GENDER || raw.Sex || 'N/A',
+  genderCh: raw['就讀學生性別'] || 'N/A',
+  financeType: raw['FINANCE TYPE'] || raw.FINANCE_TYPE_EN || raw.FinanceType || 'N/A',
+  financeTypeCh: raw['資助種類'] || 'N/A',
+  latitude: parseFloat(raw['LATITUDE'] || raw.Latitude) || null,
+  longitude: parseFloat(raw['LONGITUDE'] || raw.Longitude) || null,
+});
