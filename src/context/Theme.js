@@ -40,7 +40,6 @@ export const ThemeProvider = ({children}) => {
   const [themeMode, setThemeMode] = useState('light'); // 'light', 'dark', or 'system'
 
   useEffect(() => {
-    // Load saved preference
     const loadTheme = async () => {
       try {
         const saved = await AsyncStorage.getItem('themeMode');
@@ -49,10 +48,8 @@ export const ThemeProvider = ({children}) => {
     };
     loadTheme();
 
-    // Listen to system changes
     const subscription = Appearance.addChangeListener(({colorScheme}) => {
       if (themeMode === 'system') {
-        // Force re-render when system changes
         setThemeMode('system');
       }
     });

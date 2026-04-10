@@ -1,7 +1,3 @@
-/**
- * Model: School
- * Represents a single school record from the EDB API
- */
 export const createSchool = (raw) => ({
   id: raw['SCHOOL NO.'] || raw.SCHOOL_NO || raw.SchoolNo || '',
   nameEn: raw['ENGLISH NAME'] || raw.ENGLISH_NAME || raw.EngName || 'N/A',

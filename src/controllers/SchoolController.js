@@ -1,7 +1,3 @@
-/**
- * Controller: SchoolController
- * Handles API fetching, JSON parsing, error handling, and offline caching
- */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSchool } from '../models/School';
 import { DISTRICT_REGION } from '../i18n/translations';
@@ -11,28 +7,22 @@ const API_URL =
 
 const CACHE_KEY = 'cached_schools';
 const CACHE_TIMESTAMP_KEY = 'cached_schools_timestamp';
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-// Save fetched data to AsyncStorage
 const saveToCache = async (schools) => {
   await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(schools));
   await AsyncStorage.setItem(CACHE_TIMESTAMP_KEY, String(Date.now()));
 };
 
-// Load cached data if still valid
 const loadFromCache = async () => {
   const timestamp = await AsyncStorage.getItem(CACHE_TIMESTAMP_KEY);
   if (!timestamp) return null;
   const age = Date.now() - parseInt(timestamp, 10);
-  if (age > CACHE_TTL_MS) return null; // cache expired
+  if (age > CACHE_TTL_MS) return null;
   const raw = await AsyncStorage.getItem(CACHE_KEY);
   return raw ? JSON.parse(raw) : null;
 };
 
-/**
- * Fetch schools from API, fall back to cache if offline or on error.
- * Returns { schools, fromCache }
- */
 export const fetchSchools = async () => {
   try {
     const response = await fetch(API_URL);
@@ -42,10 +32,10 @@ export const fetchSchools = async () => {
     const raw = Array.isArray(json) ? json : json.schools || json.data || [];
     const schools = raw.map(createSchool);
 
-    await saveToCache(schools); // persist for offline use
+    await saveToCache(schools);
     return { schools, fromCache: false };
   } catch (error) {
-    // Network error or bad response — try cache
+
     const cached = await loadFromCache();
     if (cached && cached.length > 0) {
       return { schools: cached, fromCache: true };
@@ -54,7 +44,6 @@ export const fetchSchools = async () => {
   }
 };
 
-// Filter by search query, school level, gender, finance type, region, and optional A-Z sort
 export const filterSchools = (schools, query, level = 'All', gender = 'All', finance = 'All', region = 'All', sortAZ = false) => {
   let result = schools;
 
@@ -94,7 +83,6 @@ export const filterSchools = (schools, query, level = 'All', gender = 'All', fin
   return result;
 };
 
-// Get unique district list for filtering
 export const getDistricts = (schools) => {
   const set = new Set(schools.map((s) => s.district).filter(Boolean));
   return ['All', ...Array.from(set).sort()];
